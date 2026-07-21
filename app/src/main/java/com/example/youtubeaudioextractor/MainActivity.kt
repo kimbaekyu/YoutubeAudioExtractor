@@ -37,6 +37,9 @@ class MainActivity : AppCompatActivity() {
         val tvStatus = findViewById<TextView>(R.id.tvStatus)
         val btnOpenFolder = findViewById<Button>(R.id.btnOpenFolder)
 
+        // 공유를 통해 실행되었는지 확인
+        handleIntent(intent, etYoutubeUrl)
+
         btnDownload.setOnClickListener {
             val url = etYoutubeUrl.text.toString()
             if (url.isBlank()) {
@@ -121,5 +124,36 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun handleIntent(intent: Intent?, editText: EditText) {
+        if (intent?.action == Intent.ACTION_SEND && intent.type == "text/plain") {
+            val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
+            if (sharedText != null) {
+                // 유튜브 링크만 추출
+                val urlPattern = "(https?://(?:www\\.|m\\.)?youtube\\.com/watch\\?v=[\\w-]+|https?://youtu\\.be/[\\w-]+|https?://(?:www\\.)?youtube\\.com/shorts/[\\w-]+)".toRegex()
+                val match = urlPattern.find(sharedText)
+                if (match != null) {
+                    val url = match.value
+                    editText.setText(url)
+                    
+                    // 음원 추출 확인 팝업창 띄우기
+                    showExtractionConfirmDialog(url)
+                } else {
+                    editText.setText(sharedText)
+                }
+            }
+        }
+    }
+
+    private fun showExtractionConfirmDialog(url: String) {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("음원 추출 확인")
+            .setMessage("이 영상에서 음원을 추출하시겠습니까?")
+            .setPositiveButton("추출 시작") { _, _ ->
+                findViewById<Button>(R.id.btnDownload).performClick()
+            }
+            .setNegativeButton("취소", null)
+            .show()
     }
 }
