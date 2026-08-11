@@ -1,4 +1,4 @@
-# 유튜브 음원 추출 (Youtube Audio Extractor) 🎵
+# 유튜브 음원 추출 (Youtube Audio Extractor) 🎵 [Only AI Project]
 
 유튜브 링크를 입력하여 고음질 MP3 음원을 간편하게 추출하고 저장하는 안드로이드 애플리케이션입니다.
 
